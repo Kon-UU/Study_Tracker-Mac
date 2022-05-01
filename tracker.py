@@ -17,7 +17,6 @@ total_t = 0
 current = set()
 
 def on_press(key):
-    print(key)
     global cur_state
     global total_t
     if cur_state == 0:
