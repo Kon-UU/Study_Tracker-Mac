@@ -61,9 +61,9 @@ def get_time():
 
 def get_length(t):
     if t > 3600:
-        rt_value = f"{int(t // 3600)}시간 {int(t // 60)}분 {int(t % 60)}초"
+        rt_value = f"{int(t // 3600)}시간 {int((t // 60) // 60)}분 {int(t % 60)}초"
     elif t > 60:
-        rt_value = f"{int(t // 60)}분 {int(t % 60)}초"
+        rt_value = f"{int((t // 60) // 60)}분 {int(t % 60)}초"
     else:
         rt_value = f"{int(t % 60)}초"
     
