@@ -22,7 +22,7 @@ def on_press(key):
     if cur_state == 0:
         if key in COMBINATION_S:
             current.add(key)
-            if all(k in current for k in COMBINATION_S or COMBINATION_SK):
+            if all(k in current for k in (COMBINATION_S or COMBINATION_SK)):
                 # print('Start Signal Received!')
                 cur_state = 1
 
@@ -33,7 +33,7 @@ def on_press(key):
     if cur_state == 1:
         if key in COMBINATION_E:
             current.add(key)
-            if all(k in current for k in COMBINATION_E or COMBINATION_EK):
+            if all(k in current for k in (COMBINATION_E or COMBINATION_EK)):
                 # print('Stop Signal Received!')
                 cur_state = 0
 
