@@ -6,7 +6,10 @@ import os
 #참고한 코드 : pynput 예제 코드 https://github.com/moses-palmer/pynput/issues/20
 # The key combination to check
 COMBINATION_S = {keyboard.Key.cmd, keyboard.Key.alt,keyboard.KeyCode.from_char('“')}
+COMBINATION_SK = {keyboard.Key.cmd, keyboard.Key.alt,keyboard.KeyCode.from_char('[')}
+
 COMBINATION_E = {keyboard.Key.cmd, keyboard.Key.alt,keyboard.KeyCode.from_char('‘')}
+COMBINATION_EK = {keyboard.Key.cmd, keyboard.Key.alt,keyboard.KeyCode.from_char(']')}
 cur_state = 0
 total_t = 0
 
@@ -14,6 +17,7 @@ total_t = 0
 current = set()
 
 def on_press(key):
+    print(key)
     global cur_state
     global total_t
     if cur_state == 0:
@@ -26,6 +30,7 @@ def on_press(key):
                 print(get_time(), end=' ~ ', flush=True)
                 global st
                 st = time.time()
+                notification("공부 시작")
     if cur_state == 1:
         if key in COMBINATION_E:
             current.add(key)
@@ -37,7 +42,7 @@ def on_press(key):
                 ed = time.time()
                 total_t += int(ed - st)
                 print("공부 시간 :" ,get_length(int(ed - st)), "세션 총합 :", get_length(total_t))
-                notification(int(ed - st), total_t)
+                notification(str("공부 시간 : " + get_length(int(ed - st)) + " 세션 총합 : " + get_length(total_t)))
 
 
 def on_release(key):
@@ -65,9 +70,9 @@ def get_length(t):
     
     return rt_value
 
-def notification(a, b):
+def notification(a):
     title = "Study Tracker"
-    message = str("공부 시간 : " + get_length(a) +  " 세션 총합 : " + get_length(b))
+    message = a
     command = f'''
     osascript -e 'tell app "Finder" to display notification "{message}" with title "{title}"'
     '''
