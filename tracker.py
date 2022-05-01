@@ -1,0 +1,83 @@
+# Study Tracker
+import time
+from pynput import keyboard
+import os
+
+#참고한 코드 : pynput 예제 코드 https://github.com/moses-palmer/pynput/issues/20
+# The key combination to check
+COMBINATION_S = {keyboard.Key.cmd, keyboard.Key.alt,keyboard.KeyCode.from_char('“')}
+COMBINATION_E = {keyboard.Key.cmd, keyboard.Key.alt,keyboard.KeyCode.from_char('‘')}
+cur_state = 0
+total_t = 0
+
+# The currently active modifiers
+current = set()
+
+def on_press(key):
+    global cur_state
+    global total_t
+    if cur_state == 0:
+        if key in COMBINATION_S:
+            current.add(key)
+            if all(k in current for k in COMBINATION_S):
+                # print('Start Signal Received!')
+                cur_state = 1
+
+                print(get_time(), end=' ~ ', flush=True)
+                global st
+                st = time.time()
+    if cur_state == 1:
+        if key in COMBINATION_E:
+            current.add(key)
+            if all(k in current for k in COMBINATION_E):
+                # print('Stop Signal Received!')
+                cur_state = 0
+
+                print(get_time(), end=' ', flush=True)
+                ed = time.time()
+                total_t += int(ed - st)
+                print("공부 시간 :" ,get_length(int(ed - st)), "세션 총합 :", get_length(total_t))
+                notification(int(ed - st), total_t)
+                
+    if key == keyboard.Key.esc:
+        listener.stop()
+
+
+def on_release(key):
+    try:
+        current.remove(key)
+    except KeyError:
+        pass
+
+def get_time():
+    h_value = time.localtime().tm_hour
+    m_value = time.localtime().tm_min
+    if h_value > 12:
+        rt_value = f"오후 {h_value - 12}시 {m_value}분"
+    else:
+        rt_value = f"오전 {h_value}시 {m_value}분"
+    return rt_value
+
+def get_length(t):
+    if t > 3600:
+        rt_value = f"{int(t // 3600)}시간 {int(t // 60)}분 {int(t % 60)}초"
+    elif t > 60:
+        rt_value = f"{int(t // 60)}분 {int(t % 60)}초"
+    else:
+        rt_value = f"{int(t % 60)}초"
+    
+    return rt_value
+
+def notification(a, b):
+    title = "Study Tracker"
+    message = str("공부 시간 : " + get_length(a) +  " 세션 총합 : " + get_length(b))
+    command = f'''
+    osascript -e 'tell app "Finder" to display notification "{message}" with title "{title}"'
+    '''
+    os.system(command)
+        
+with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+    listener.join()
+
+now = time.localtime()
+print(type(now.tm_hour))
