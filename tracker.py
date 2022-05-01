@@ -38,9 +38,6 @@ def on_press(key):
                 total_t += int(ed - st)
                 print("공부 시간 :" ,get_length(int(ed - st)), "세션 총합 :", get_length(total_t))
                 notification(int(ed - st), total_t)
-                
-    if key == keyboard.Key.esc:
-        listener.stop()
 
 
 def on_release(key):
